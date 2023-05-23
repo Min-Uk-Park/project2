@@ -1,2 +1,2 @@
 # opensoftware project2
-    이미지 상 객체 인식하기
+1. 작업할 저장소 만들기
