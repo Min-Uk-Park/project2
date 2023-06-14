@@ -1,39 +1,37 @@
-
-//import required packages
+// Import required packages
 var AWS = require('aws-sdk');
 
-//AWS access details
+// AWS access details
 AWS.config.update({
     accessKeyId: 'AKIAZWBYDAILKLJD4LMZ',
     secretAccessKey: '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',
     region: 'ap-northeast-2'
 });
 
-//input parameters
+// Input parameters
 var params = {
     Image: {
         S3Object: {
-            Bucket: "projecttest2-1",
-            Name: "project_sample4.jpg"
+            Bucket: 'projecttest2-1',
+            Name: 'project_sample4.jpg'
         }
     },
     MaxLabels: 5,
     MinConfidence: 80
 };
 
-//Call AWS Rekognition Class
+// Call AWS Rekognition Class
 const rekognition = new AWS.Rekognition();
 
-
-
-//Detect labels
+// Detect labels
 rekognition.detectLabels(params, function(err, data) {
-    if (err) console.log(err, err.stack); // an error occurred
-    else {
+    if (err) {
+        console.log(err, err.stack); // an error occurred
+    } else {
         console.log(data); // successful response
         const labels = data.Labels; // Assign the detected labels to the 'labels' array
 
-        /////////////////////////////////
+        ///////////////////////////////////
         const { createCanvas, loadImage, registerFont } = require('canvas');
         const fs = require('fs');
 
@@ -41,11 +39,19 @@ rekognition.detectLabels(params, function(err, data) {
         registerFont('arial.ttf', { family: 'Sans' });
 
         // Create a canvas
-        const canvas = createCanvas(800, 600);
+        const canvas = createCanvas();
         const context = canvas.getContext('2d');
 
         // Load and draw the image
         loadImage('project_sample4.jpg').then((image) => {
+            // Get the original image dimensions
+            const imageWidth = image.width;
+            const imageHeight = image.height;
+
+            // Resize the canvas to match the original image size
+            canvas.width = imageWidth;
+            canvas.height = imageHeight;
+
             context.drawImage(image, 0, 0);
 
             // Set font properties
@@ -63,11 +69,11 @@ rekognition.detectLabels(params, function(err, data) {
                     if (instance.BoundingBox && instance.BoundingBox.Left) {
                         const { Left, Top, Width, Height } = instance.BoundingBox;
 
-                        // Calculate the bounding box coordinates relative to the canvas size
-                        const x = Left * canvas.width;
-                        const y = Top * canvas.height;
-                        const width = Width * canvas.width;
-                        const height = Height * canvas.height;
+                        // Calculate the bounding box coordinates relative to the original image size
+                        const x = Left * imageWidth;
+                        const y = Top * imageHeight;
+                        const width = Width * imageWidth;
+                        const height = Height * imageHeight;
 
                         // Draw the bounding box and label text
                         context.beginPath();
@@ -78,9 +84,6 @@ rekognition.detectLabels(params, function(err, data) {
                 });
             });
 
-            const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
-            const fs = require("fs");
-
             // Save the image
             const out = fs.createWriteStream('labeled_image4.jpg');
             const stream = canvas.createJPEGStream();
@@ -89,7 +92,6 @@ rekognition.detectLabels(params, function(err, data) {
                 console.log('Image saved: labeled_image4.jpg');
             });
         });
-        /////////////////////////////////
+        ///////////////////////////////////
     }
 });
-
