@@ -54,7 +54,7 @@ rekognition.detectLabels(params, function(err, data) {
             context.drawImage(image, 0, 0);
 
             // Set font properties
-            const fontSize = 40;
+            const fontSize = 10;
             const fontFamily = 'Arial';
             context.font = `${fontSize}px ${fontFamily}`;
 
@@ -88,7 +88,7 @@ rekognition.detectLabels(params, function(err, data) {
                             // Draw a rectangle
                             context.beginPath();
                             context.rect(x, y, width, height);
-                            context.lineWidth = 5;
+                            context.lineWidth = 1;
                             context.strokeStyle = 'red';
                             context.fillStyle = 'transparent';
                             context.stroke();
@@ -97,13 +97,14 @@ rekognition.detectLabels(params, function(err, data) {
                             // Draw a rectangle
                             context.beginPath();
                             context.rect(x, y, width, height);
-                            context.lineWidth = 5;
+                            context.lineWidth = 1;
                             context.strokeStyle = 'red';
                             context.fillStyle = 'transparent';
                             context.stroke();
                         }
 
                         // Draw the label text
+                        
                         context.fillStyle = 'white';
                         context.fillText(name, x, y - 5);
                     }
