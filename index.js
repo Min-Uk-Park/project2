@@ -18,6 +18,7 @@ var params = {
             Bucket: 'projecttest2-1',
             Name: 'project_sample6.jpg'
         }
+        
     },
     MaxLabels: 5,
     MinConfidence: 80
