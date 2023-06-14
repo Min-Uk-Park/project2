@@ -1,3 +1,4 @@
+
 //import required packages
 var AWS = require('aws-sdk');
 
@@ -12,8 +13,8 @@ AWS.config.update({
 var params = {
     Image: {
         S3Object: {
-            Bucket: "openproject22",
-            Name: "image newjins.jpg"
+            Bucket: "projecttest2-1",
+            Name: "project_sample4.jpg"
         }
     },
     MaxLabels: 5,
@@ -23,79 +24,72 @@ var params = {
 //Call AWS Rekognition Class
 const rekognition = new AWS.Rekognition();
 
-//Detect labels
-rekognition.detectLabels(params, function(err,data){
-    if(err) console.log(err,err.stack); // an error occurred
-    else console.log(data); // successful response
-});
 
 
 //Detect labels
-rekognition.detectLabels(params, function(err, data){
-    if(err) console.log(err,err.stack); // an error occurred
-    else    console.log(data); // successful response
+rekognition.detectLabels(params, function(err, data) {
+    if (err) console.log(err, err.stack); // an error occurred
+    else {
+        console.log(data); // successful response
+        const labels = data.Labels; // Assign the detected labels to the 'labels' array
+
+        /////////////////////////////////
+        const { createCanvas, loadImage, registerFont } = require('canvas');
+        const fs = require('fs');
+
+        // Load Arial font
+        registerFont('arial.ttf', { family: 'Sans' });
+
+        // Create a canvas
+        const canvas = createCanvas(800, 600);
+        const context = canvas.getContext('2d');
+
+        // Load and draw the image
+        loadImage('project_sample4.jpg').then((image) => {
+            context.drawImage(image, 0, 0);
+
+            // Set font properties
+            const fontSize = 40;
+            const fontFamily = 'Arial';
+            context.font = `${fontSize}px ${fontFamily}`;
+            context.lineWidth = 10;
+            context.fillStyle = 'red';
+            context.strokeStyle = 'red';
+
+            // Draw labels on the image
+            labels.forEach((label) => {
+                const name = label.Name;
+                label.Instances.forEach((instance) => {
+                    if (instance.BoundingBox && instance.BoundingBox.Left) {
+                        const { Left, Top, Width, Height } = instance.BoundingBox;
+
+                        // Calculate the bounding box coordinates relative to the canvas size
+                        const x = Left * canvas.width;
+                        const y = Top * canvas.height;
+                        const width = Width * canvas.width;
+                        const height = Height * canvas.height;
+
+                        // Draw the bounding box and label text
+                        context.beginPath();
+                        context.rect(x, y, width, height);
+                        context.stroke();
+                        context.fillText(name, x, y - 5); // Adjust the text position to be above the bounding box
+                    }
+                });
+            });
+
+            const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
+            const fs = require("fs");
+
+            // Save the image
+            const out = fs.createWriteStream('labeled_image4.jpg');
+            const stream = canvas.createJPEGStream();
+            stream.pipe(out);
+            out.on('finish', () => {
+                console.log('Image saved: labeled_image4.jpg');
+            });
+        });
+        /////////////////////////////////
+    }
 });
 
-
-const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
-const fs = require("fs");
-
-
-// 이미지 상 확인하기 //
-
-
-
-
-//const AWS = require('aws-sdk');
-//const fs = require('fs');
-const { createCanvas, loadImage } = require('canvas');
-
-// AWS access details
-AWS.config.update({
-    accessKeyId: 'AKIAZWBYDAILKLJD4LMZ',
-    secretAccessKey: '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',
-    region: 'ap-northeast-2'
-});
-
-
-
-
-// Detect labels
-rekognition.detectLabels(params, async function (err, data) {
-  if (err) {
-    console.log(err, err.stack); // An error occurred
-  } else {
-    console.log(data); // Successful response
-    // Process the result and display the image
-    await displayResultImage(data);
-  }
-});
-
-// Function to display the result image
-async function displayResultImage(data) {
-  // Load the original image
-  const originalImage = await loadImage('C:\Users\LG\Desktop\O.S project\newjins.jpg');
-  
-  // Create a canvas
-  const canvas = createCanvas(originalImage.width, originalImage.height);
-  const ctx = canvas.getContext('2d');
-  
-  // Draw the original image on the canvas
-  ctx.drawImage(originalImage, 0, 0, originalImage.width, originalImage.height);
-  
-  // Draw the labels on the canvas
-  data.Labels.forEach(label => {
-    ctx.font = '20px Arial';
-    ctx.fillStyle = 'red';
-    ctx.fillText(label.Name, 10, label.Confidence);
-  });
-  
-  // Convert the canvas to a buffer
-  const buffer = canvas.toBuffer('image/jpeg');
-  
-  // Save the result image
-  fs.writeFileSync('result.jpg', buffer);
-  
-  // Display a message
-  console.log('Result image saved as result.jpg');
-}
