@@ -54,7 +54,7 @@ rekognition.detectLabels(params, function(err, data) {
             context.drawImage(image, 0, 0);
 
             // Set font properties
-            const fontSize = 10;
+            const fontSize = 20;
             const fontFamily = 'Arial';
             context.font = `${fontSize}px ${fontFamily}`;
 

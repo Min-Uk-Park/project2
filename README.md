@@ -1,4 +1,5 @@
 # opensoftware project2
+
 1. 작업할 저장소 만들기
 
 2. 아마존 AWS 회원가입을 한다.
