@@ -16,7 +16,7 @@ var params = {
     Image: {
         S3Object: {
             Bucket: 'projecttest2-1',
-            Name: 'project_sample5.jpg'
+            Name: 'project_sample1.jpg'
         }
     },
     MaxLabels: 5,
@@ -42,7 +42,7 @@ rekognition.detectLabels(params, function(err, data) {
         const context = canvas.getContext('2d');
 
         // Load and draw the image
-        loadImage('project_sample5.jpg').then((image) => {
+        loadImage('./sample_image/project_sample1.jpg').then((image) => {
             // Get the original image dimensions
             const imageWidth = image.width;
             const imageHeight = image.height;
@@ -112,11 +112,11 @@ rekognition.detectLabels(params, function(err, data) {
             });
 
             // Save the image
-            const out = fs.createWriteStream('labeled_image5.jpg');
+            const out = fs.createWriteStream('./labeled_image/labeled_image1.jpg');
             const stream = canvas.createJPEGStream();
             stream.pipe(out);
             out.on('finish', () => {
-                console.log('Image saved: labeled_image5.jpg');
+                console.log('Image saved: labeled_image1.jpg');
             });
         });
     }
