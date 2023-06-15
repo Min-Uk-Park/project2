@@ -16,9 +16,8 @@ var params = {
     Image: {
         S3Object: {
             Bucket: 'projecttest2-1',
-            Name: 'project_sample6.jpg'
+            Name: 'project_sample5.jpg'
         }
-        
     },
     MaxLabels: 5,
     MinConfidence: 80
@@ -43,7 +42,7 @@ rekognition.detectLabels(params, function(err, data) {
         const context = canvas.getContext('2d');
 
         // Load and draw the image
-        loadImage('project_sample6.jpg').then((image) => {
+        loadImage('project_sample5.jpg').then((image) => {
             // Get the original image dimensions
             const imageWidth = image.width;
             const imageHeight = image.height;
@@ -89,7 +88,7 @@ rekognition.detectLabels(params, function(err, data) {
                             // Draw a rectangle
                             context.beginPath();
                             context.rect(x, y, width, height);
-                            context.lineWidth = 1;
+                            context.lineWidth = 2;
                             context.strokeStyle = 'red';
                             context.fillStyle = 'transparent';
                             context.stroke();
@@ -98,7 +97,7 @@ rekognition.detectLabels(params, function(err, data) {
                             // Draw a rectangle
                             context.beginPath();
                             context.rect(x, y, width, height);
-                            context.lineWidth = 1;
+                            context.lineWidth = 2;
                             context.strokeStyle = 'red';
                             context.fillStyle = 'transparent';
                             context.stroke();
@@ -113,12 +112,14 @@ rekognition.detectLabels(params, function(err, data) {
             });
 
             // Save the image
-            const out = fs.createWriteStream('labeled_image6.jpg');
+            const out = fs.createWriteStream('labeled_image5.jpg');
             const stream = canvas.createJPEGStream();
             stream.pipe(out);
             out.on('finish', () => {
-                console.log('Image saved: labeled_image6.jpg');
+                console.log('Image saved: labeled_image5.jpg');
             });
         });
     }
 });
+
+
